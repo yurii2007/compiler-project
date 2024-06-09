@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum TokenKind {
     Number(i64),
     Plus,
@@ -12,7 +12,7 @@ pub enum TokenKind {
     Whitespace,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct TextSpan {
     pub(crate) start: usize,
     pub(crate) end: usize,
@@ -24,12 +24,12 @@ impl TextSpan {
         Self { start, end, literal }
     }
 
-    pub fn length(&self) -> usize {
-        self.end - self.start
-    }
+    // pub fn length(&self) -> usize {
+    //     self.end - self.start
+    // }
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Token {
     pub(crate) kind: TokenKind,
     pub(crate) span: TextSpan,
@@ -52,18 +52,16 @@ impl<'a> Lexer<'a> {
     }
 
     pub fn next_token(&mut self) -> Option<Token> {
-        if self.current_pos > self.input.len() {
-            return None;
-        }
         if self.current_pos == self.input.len() {
+            let eof_char = '\0';
             self.current_pos += 1;
-            return Some(Token::new(TokenKind::Eof, TextSpan::new(0, 0, '\0'.to_string())));
+            return Some(Token::new(TokenKind::Eof, TextSpan::new(0, 0, eof_char.to_string())));
         }
 
         let c = self.current_char();
         return c.map(|c: char| {
             let start = self.current_pos;
-            let mut kind = TokenKind::Bad;
+            let kind: TokenKind;
 
             if Self::is_number_start(&c) {
                 let number: i64 = self.consume_number();
@@ -99,9 +97,10 @@ impl<'a> Lexer<'a> {
         if self.current_pos >= self.input.len() {
             return None;
         }
-        let c = self.current_char().unwrap();
+        let c = self.current_char();
         self.current_pos += 1;
-        Some(c)
+
+        c
     }
 
     fn consume_number(&mut self) -> i64 {
@@ -109,7 +108,7 @@ impl<'a> Lexer<'a> {
         while let Some(c) = self.current_char() {
             if c.is_digit(10) {
                 self.consume().unwrap();
-                number = number * 10 + (c.to_digit(10).unwrap() as i64);
+                number = number * 10 + c.to_digit(10).unwrap() as i64;
             } else {
                 break;
             }
