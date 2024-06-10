@@ -24,9 +24,9 @@ impl TextSpan {
         Self { start, end, literal }
     }
 
-    // pub fn length(&self) -> usize {
-    //     self.end - self.start
-    // }
+    pub fn length(&self) -> usize {
+        self.end - self.start
+    }
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -57,12 +57,10 @@ impl<'a> Lexer<'a> {
             self.current_pos += 1;
             return Some(Token::new(TokenKind::Eof, TextSpan::new(0, 0, eof_char.to_string())));
         }
-
         let c = self.current_char();
-        return c.map(|c: char| {
+        return c.map(|c| {
             let start = self.current_pos;
             let kind: TokenKind;
-
             if Self::is_number_start(&c) {
                 let number: i64 = self.consume_number();
                 kind = TokenKind::Number(number);
@@ -71,7 +69,6 @@ impl<'a> Lexer<'a> {
                 kind = TokenKind::Whitespace;
             } else {
                 kind = self.consume_punctuation();
-                self.consume();
             }
 
             let end = self.current_pos;
@@ -108,7 +105,7 @@ impl<'a> Lexer<'a> {
         while let Some(c) = self.current_char() {
             if c.is_digit(10) {
                 self.consume().unwrap();
-                number = number * 10 + c.to_digit(10).unwrap() as i64;
+                number = number * 10 + (c.to_digit(10).unwrap() as i64);
             } else {
                 break;
             }

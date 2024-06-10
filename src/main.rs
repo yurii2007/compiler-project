@@ -3,7 +3,7 @@ use ast::{ evaluator::ASTEvaluator, lexer::Lexer, parser::Parser, Ast };
 mod ast;
 
 fn main() {
-    let input = "(3 + 4) * 7";
+    let input = "(3 + 4) * 6 / 3";
 
     let mut lexer = Lexer::new(input);
     let mut tokens = Vec::new();
@@ -22,5 +22,5 @@ fn main() {
 
     let mut eval = ASTEvaluator::new();
     ast.visit(&mut eval);
-    println!("Should be equal to a 35 => {:?}", eval.last_value)
+    println!("Should be equal to a 14 => {:?}", eval.last_value)
 }
