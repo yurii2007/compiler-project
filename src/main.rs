@@ -1,6 +1,7 @@
 use ast::{ evaluator::ASTEvaluator, lexer::Lexer, parser::Parser, Ast };
 
 mod ast;
+mod diagnostic;
 
 fn main() {
     let input = "(3 + 4) * 6 / 3";

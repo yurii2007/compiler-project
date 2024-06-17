@@ -1,3 +1,5 @@
+use std::{ fmt::{ Display, Formatter } };
+
 #[derive(Debug, PartialEq, Clone)]
 pub enum TokenKind {
     Number(i64),
@@ -10,6 +12,23 @@ pub enum TokenKind {
     Eof,
     Bad,
     Whitespace,
+}
+
+impl Display for TokenKind {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            TokenKind::Asterisk => write!(f, "*"),
+            TokenKind::Plus => write!(f, "+"),
+            TokenKind::Minus => write!(f, "-"),
+            TokenKind::Slash => write!(f, "/"),
+            TokenKind::RightParen => write!(f, "("),
+            TokenKind::LeftParen => write!(f, ")"),
+            TokenKind::Eof => write!(f, "eof*"),
+            TokenKind::Bad => write!(f, "bad"),
+            TokenKind::Whitespace => write!(f, "whitespace"),
+            TokenKind::Number(_) => write!(f, "number"),
+        }
+    }
 }
 
 #[derive(Debug, PartialEq, Clone)]
